@@ -1,0 +1,1490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FocusRoom - Premium Developer Preview & Simulator</title>
+    <!-- Inter & Outfit Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-dark: #090A0F;
+            --card-bg: #12131C;
+            --accent-primary: #6366F1;   /* Sophisticated Royal Indigo */
+            --accent-secondary: #0EA5E9; /* Premium Deep Sky Blue */
+            --accent-tertiary: #F97316;  /* Warm Slate Amber (Break State) */
+            --status-rest: #64748B;      /* Slate Grey (Resting) */
+            --text-light: #F8FAFC;       /* Off-White Slate-50 */
+            --text-muted: #64748B;       /* Muted Slate-500 */
+            --border-light: rgba(255, 255, 255, 0.05);
+            --border-active: rgba(99, 102, 241, 0.4);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Outfit', 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: #050608;
+            color: var(--text-light);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(99, 102, 241, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 85% 85%, rgba(14, 165, 233, 0.08) 0%, transparent 40%);
+            padding: 20px;
+        }
+
+        /* Workspace Layout */
+        .workspace {
+            display: flex;
+            width: 100%;
+            max-width: 1200px;
+            gap: 40px;
+            justify-content: center;
+            align-items: stretch;
+            flex-wrap: wrap;
+        }
+
+        /* Device Frame container */
+        .phone-container {
+            flex: 0 0 380px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Highly refined phone frame */
+        .phone-shell {
+            width: 360px;
+            height: 740px;
+            background: #09090D;
+            border-radius: 48px;
+            padding: 10px;
+            box-shadow: 0 30px 70px -15px rgba(0, 0, 0, 0.9),
+                        0 0 1px 1px rgba(255, 255, 255, 0.1) inset;
+            border: 4px solid #1E202B;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-dark);
+            border-radius: 38px;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Clean Status Bar */
+        .phone-notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 140px;
+            height: 28px;
+            background: #000;
+            border-bottom-left-radius: 18px;
+            border-bottom-right-radius: 18px;
+            z-index: 100;
+        }
+
+        .phone-status-bar {
+            height: 38px;
+            padding: 12px 24px 0 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+            font-weight: 500;
+            color: #ffffff;
+            z-index: 99;
+            background: transparent;
+            font-family: 'Inter', sans-serif;
+            letter-spacing: -0.01em;
+        }
+
+        .status-icons {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .status-battery-pill {
+            width: 18px;
+            height: 9px;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            border-radius: 2px;
+            padding: 1px;
+            display: flex;
+        }
+
+        .status-battery-level {
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            border-radius: 1px;
+        }
+
+        /* Subtle Designer Push Notification */
+        .notification-banner {
+            position: absolute;
+            top: -100px;
+            left: 12px;
+            right: 12px;
+            background: rgba(18, 19, 28, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(25px);
+            border-radius: 20px;
+            padding: 14px 16px;
+            z-index: 101;
+            display: flex;
+            gap: 12px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            cursor: pointer;
+        }
+
+        .notification-banner.active {
+            top: 45px;
+        }
+
+        .notification-icon-indicator {
+            width: 8px;
+            height: 8px;
+            background: var(--accent-primary);
+            border-radius: 50%;
+            margin-top: 4px;
+            box-shadow: 0 0 8px var(--accent-primary);
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--accent-primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 2px;
+        }
+
+        .notification-text {
+            font-size: 12px;
+            font-weight: 400;
+            color: var(--text-light);
+            line-height: 1.4;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* App Screens Container */
+        .screen-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            position: relative;
+            padding: 15px 20px 20px 20px;
+        }
+
+        /* Dashboard Styles */
+        #screen-dashboard {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .dashboard-header {
+            margin-top: 10px;
+        }
+
+        .dashboard-header h1 {
+            font-size: 24px;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: -0.02em;
+            margin-bottom: 4px;
+        }
+
+        .dashboard-header p {
+            font-size: 13px;
+            color: var(--text-muted);
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Premium Bento Layout */
+        .bento-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .bento-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 16px;
+            border: 1px solid var(--border-light);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 115px;
+            position: relative;
+            transition: border-color 0.2s;
+        }
+
+        .bento-card:hover {
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        .bento-card::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 16px;
+            width: 20px;
+            height: 2px;
+            border-radius: 1px;
+        }
+
+        .bento-streak::before { background: var(--accent-tertiary); }
+        .bento-online::before { background: var(--accent-secondary); }
+
+        .bento-card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .bento-title {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .bento-indicator {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+
+        .streak-indicator { background: var(--accent-tertiary); }
+        .online-indicator { background: var(--accent-secondary); }
+
+        .bento-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: #fff;
+            margin-top: auto;
+            letter-spacing: -0.01em;
+        }
+
+        .bento-subtext {
+            font-size: 10px;
+            color: var(--text-muted);
+            margin-top: 2px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Elegant Recommendation Banner */
+        .featured-banner {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 20px;
+            border: 1px solid rgba(99, 102, 241, 0.15);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 165px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .featured-banner:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent-primary);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .featured-badge {
+            align-self: flex-start;
+            background: rgba(99, 102, 241, 0.08);
+            color: var(--accent-primary);
+            border: 1px solid rgba(99, 102, 241, 0.15);
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .featured-details h2 {
+            font-size: 16px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 2px;
+            margin-top: 10px;
+            letter-spacing: -0.01em;
+        }
+
+        .featured-details p {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .featured-action {
+            align-self: flex-end;
+            background: var(--accent-primary);
+            color: #fff;
+            font-weight: 600;
+            font-size: 11px;
+            padding: 7px 14px;
+            border-radius: 8px;
+            margin-top: 10px;
+            transition: background 0.2s;
+        }
+
+        .featured-banner:hover .featured-action {
+            background: #4f46e5;
+        }
+
+        /* Clean Room List Explorer */
+        .explore-section h3 {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .room-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .room-item {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 14px 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid var(--border-light);
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .room-item:hover {
+            border-color: rgba(255,255,255,0.08);
+            background: #151622;
+        }
+
+        .room-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .room-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+
+        .room-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .room-members {
+            font-size: 10px;
+            color: var(--text-muted);
+            margin-top: 1px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .room-arrow {
+            font-weight: 500;
+            font-size: 14px;
+            opacity: 0.6;
+            transition: transform 0.2s, opacity 0.2s;
+        }
+
+        .room-item:hover .room-arrow {
+            transform: translateX(2px);
+            opacity: 1;
+        }
+
+        /* Focus Room Screen Layout */
+        #screen-room {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .room-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-top: 8px;
+        }
+
+        .back-btn {
+            width: 36px;
+            height: 36px;
+            background: var(--card-bg);
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid var(--border-light);
+            cursor: pointer;
+            font-size: 14px;
+            color: #fff;
+            transition: all 0.2s;
+        }
+
+        .back-btn:hover {
+            background: #181a26;
+            border-color: rgba(255,255,255,0.1);
+        }
+
+        .room-header-text h2 {
+            font-size: 15px;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: -0.01em;
+        }
+
+        .room-header-status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 10px;
+            color: var(--text-muted);
+            margin-top: 1px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .room-status-indicator {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--accent-secondary);
+        }
+
+        /* Professional Vibe Status Selectors */
+        .vibe-row {
+            display: flex;
+            gap: 6px;
+            margin-top: 16px;
+            justify-content: space-between;
+        }
+
+        .vibe-pill {
+            background: var(--card-bg);
+            border: 1px solid var(--border-light);
+            padding: 8px 6px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+            flex: 1;
+        }
+
+        .vibe-pill.active[data-vibe="focused"] {
+            border-color: var(--accent-primary);
+            background: rgba(99, 102, 241, 0.08);
+            color: #fff;
+        }
+
+        .vibe-pill.active[data-vibe="vibing"] {
+            border-color: var(--accent-secondary);
+            background: rgba(14, 165, 233, 0.08);
+            color: #fff;
+        }
+
+        .vibe-pill.active[data-vibe="slacking"] {
+            border-color: var(--accent-tertiary);
+            background: rgba(249, 115, 22, 0.08);
+            color: #fff;
+        }
+
+        .vibe-pill.active[data-vibe="sleeping"] {
+            border-color: var(--status-rest);
+            background: rgba(100, 116, 139, 0.08);
+            color: #fff;
+        }
+
+        /* Modern minimalist 2D Floor Area */
+        .grid-floor {
+            flex: 1;
+            margin-top: 16px;
+            border-radius: 20px;
+            background: #0b0c14;
+            border: 1px solid var(--border-light);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Avatars on Grid Map */
+        .avatar-widget {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 70px;
+            text-align: center;
+            transition: all 1.8s cubic-bezier(0.2, 0.8, 0.2, 1); /* Compose spring transition curve */
+            z-index: 10;
+        }
+
+        .avatar-circle {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #181924;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 600;
+            font-size: 13px;
+            position: relative;
+            border: 1.5px solid var(--border-light);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+            color: #fff;
+            transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .avatar-widget:hover .avatar-circle {
+            transform: scale(1.1);
+        }
+
+        /* Designer clean borders on state */
+        .avatar-widget[data-status="focused"] .avatar-circle {
+            border-color: var(--accent-primary);
+        }
+        .avatar-widget[data-status="vibing"] .avatar-circle {
+            border-color: var(--accent-secondary);
+        }
+        .avatar-widget[data-status="slacking"] .avatar-circle {
+            border-color: var(--accent-tertiary);
+        }
+        .avatar-widget[data-status="sleeping"] .avatar-circle {
+            border-color: var(--status-rest);
+            opacity: 0.5;
+        }
+
+        /* Slack-style minimal indicator badges */
+        .vibe-badge {
+            position: absolute;
+            bottom: -1px;
+            right: -1px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 2px solid #0b0c14;
+            display: block;
+        }
+
+        .avatar-widget[data-status="focused"] .vibe-badge { background: var(--accent-primary); }
+        .avatar-widget[data-status="vibing"] .vibe-badge { background: var(--accent-secondary); }
+        .avatar-widget[data-status="slacking"] .vibe-badge { background: var(--accent-tertiary); }
+        .avatar-widget[data-status="sleeping"] .vibe-badge { background: var(--status-rest); }
+
+        .avatar-name {
+            font-size: 10px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.8);
+            margin-top: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 100%;
+        }
+
+        /* Clean Modern Lofi Widget */
+        .lofi-widget {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 12px 16px;
+            margin-top: 16px;
+            border: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            height: 64px;
+        }
+
+        .lofi-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .lofi-track-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: #fff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Waveform equalizer */
+        .visualizer-container {
+            display: flex;
+            align-items: flex-end;
+            gap: 2px;
+            height: 10px;
+            margin-top: 3px;
+        }
+
+        .wave-bar {
+            width: 2px;
+            height: 2px;
+            background: var(--accent-secondary);
+            border-radius: 1px;
+            transition: height 0.15s ease;
+        }
+
+        .lofi-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .lofi-btn {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.02);
+            color: #fff;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-size: 11px;
+            transition: all 0.2s;
+        }
+
+        .lofi-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .lofi-play {
+            background: #fff;
+            color: #000;
+            font-weight: bold;
+        }
+
+        .lofi-play:hover {
+            background: #e2e8f0;
+            color: #000;
+        }
+
+        /* Phone Home Screen Grid Mock */
+        .phone-homescreen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, #1b203a 0%, #080911 100%);
+            z-index: 90;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 60px 20px 40px 20px;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .homescreen-time {
+            font-size: 42px;
+            font-weight: 300;
+            color: #fff;
+            letter-spacing: -0.01em;
+        }
+
+        .homescreen-date {
+            font-size: 12px;
+            font-weight: 500;
+            color: rgba(255,255,255,0.6);
+            margin-top: -6px;
+            text-align: center;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .app-icon-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            width: 100%;
+            margin-top: 100px;
+        }
+
+        .app-icon-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .homescreen-app-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 11px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 16px;
+            font-weight: 700;
+            color: #fff;
+            transition: transform 0.2s;
+        }
+
+        .app-icon-wrapper:hover .homescreen-app-icon {
+            transform: translateY(-2px);
+        }
+
+        .app-icon-focusroom {
+            background: var(--accent-primary);
+        }
+
+        .app-icon-label {
+            font-size: 9px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 4px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Physical controls */
+        .device-controls {
+            margin-top: 15px;
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .control-btn {
+            background: #141622;
+            border: 1px solid var(--border-light);
+            color: var(--text-light);
+            border-radius: 12px;
+            padding: 9px 15px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .control-btn:hover {
+            background: #1d2030;
+            border-color: rgba(255,255,255,0.12);
+        }
+
+        .control-btn-home {
+            background: rgba(239, 68, 68, 0.08);
+            border-color: rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+        }
+
+        .control-btn-home:hover {
+            background: rgba(239, 68, 68, 0.15);
+        }
+
+        /* Log Terminal Console */
+        .terminal-panel {
+            flex: 1;
+            min-width: 320px;
+            background: #07080c;
+            border-radius: 28px;
+            border: 1px solid var(--border-light);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 20px 45px rgba(0,0,0,0.6);
+            height: 740px;
+        }
+
+        .terminal-header {
+            background: #0c0d15;
+            padding: 16px 24px;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .terminal-header h2 {
+            font-size: 13px;
+            font-weight: 600;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .terminal-header h2::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: #10B981;
+            border-radius: 50%;
+            box-shadow: 0 0 6px #10B981;
+        }
+
+        .terminal-badge {
+            background: rgba(99, 102, 241, 0.08);
+            color: var(--accent-primary);
+            border: 1px solid rgba(99, 102, 241, 0.15);
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .terminal-body {
+            flex: 1;
+            padding: 24px;
+            font-family: monospace;
+            font-size: 11px;
+            line-height: 1.6;
+            color: #8b949e;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .log-entry {
+            display: flex;
+            gap: 12px;
+        }
+
+        .log-time {
+            color: #484f58;
+            flex-shrink: 0;
+        }
+
+        .log-msg {
+            color: #c9d1d9;
+            word-break: break-all;
+        }
+
+        .log-system { color: #f85149; font-weight: 600; }
+        .log-ws { color: #58a6ff; }
+        .log-fgs { color: #d29922; }
+
+        /* Background grid layout */
+        .grid-grid-canvas {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            grid-template-rows: repeat(6, 1fr);
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .grid-cell {
+            border-right: 1px solid rgba(255,255,255,0.012);
+            border-bottom: 1px solid rgba(255,255,255,0.012);
+        }
+
+        @media (max-width: 900px) {
+            .workspace {
+                flex-direction: column;
+                align-items: center;
+            }
+            .terminal-panel {
+                width: 360px;
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="workspace">
+        
+        <!-- Left Side: Android Phone Simulation -->
+        <div class="phone-container">
+            <div class="phone-shell" id="phone-shell">
+                <div class="phone-screen">
+                    
+                    <!-- Phone Notch -->
+                    <div class="phone-notch"></div>
+                    
+                    <!-- Clean Notification Overlay -->
+                    <div class="notification-banner" id="notif-banner" onclick="restoreAppFromNotif()">
+                        <div class="notification-icon-indicator"></div>
+                        <div class="notification-content">
+                            <div class="notification-title" id="notif-title">FocusRoom Sync</div>
+                            <div class="notification-text" id="notif-text">Raza is offline. Your focus group is still working.</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Phone Status Bar -->
+                    <div class="phone-status-bar">
+                        <span id="phone-clock">23:37</span>
+                        <div class="status-icons">
+                            <span>LTE</span>
+                            <div class="status-battery-pill">
+                                <div class="status-battery-level"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Screen 1: Dashboard View -->
+                    <div class="screen-content" id="screen-dashboard">
+                        <div class="dashboard-header">
+                            <h1>Hey, Raza 👋</h1>
+                            <p>Your circle is locked in right now.</p>
+                        </div>
+
+                        <!-- Bento Cards Grid -->
+                        <div class="bento-grid">
+                            <div class="bento-card bento-streak">
+                                <div class="bento-card-top">
+                                    <span class="bento-title">Daily Streak</span>
+                                    <div class="bento-indicator streak-indicator"></div>
+                                </div>
+                                <div>
+                                    <div class="bento-value">5 Days</div>
+                                    <div class="bento-subtext">125m focused today</div>
+                                </div>
+                            </div>
+                            <div class="bento-card bento-online">
+                                <div class="bento-card-top">
+                                    <span class="bento-title">Buddies Online</span>
+                                    <div class="bento-indicator online-indicator"></div>
+                                </div>
+                                <div>
+                                    <div class="bento-value" id="online-count">4 Active</div>
+                                    <div class="bento-subtext">Working right now</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Bento featured recommendations -->
+                        <div class="featured-banner" onclick="openRoom('Rainy Tokyo Session', '#0EA5E9', 5)">
+                            <div class="featured-badge">RECOMMENDATION</div>
+                            <div class="featured-details">
+                                <h2>Rainy Tokyo Session</h2>
+                                <p>5 friends online inside</p>
+                            </div>
+                            <div class="featured-action">Join Room</div>
+                        </div>
+
+                        <!-- Other active rooms list -->
+                        <div class="explore-section">
+                            <h3>Explore Active FocusRooms</h3>
+                            <div class="room-list">
+                                <div class="room-item" onclick="openRoom('Chillhop Library', '#6366F1', 4)">
+                                    <div class="room-info">
+                                        <div class="room-dot" style="background: var(--accent-primary);"></div>
+                                        <div>
+                                            <div class="room-title">Chillhop Library</div>
+                                            <div class="room-members">4 active right now</div>
+                                        </div>
+                                    </div>
+                                    <div class="room-arrow" style="color: var(--accent-primary)">→</div>
+                                </div>
+                                <div class="room-item" onclick="openRoom('Lofi Horizon Cafe', '#F97316', 3)">
+                                    <div class="room-info">
+                                        <div class="room-dot" style="background: var(--accent-tertiary);"></div>
+                                        <div>
+                                            <div class="room-title">Lofi Horizon Cafe</div>
+                                            <div class="room-members">3 active right now</div>
+                                        </div>
+                                    </div>
+                                    <div class="room-arrow" style="color: var(--accent-tertiary)">→</div>
+                                </div>
+                                <div class="room-item" onclick="openRoom('Deep Focus Studio', '#10B981', 6)">
+                                    <div class="room-info">
+                                        <div class="room-dot" style="background: #10B981;"></div>
+                                        <div>
+                                            <div class="room-title">Deep Focus Studio</div>
+                                            <div class="room-members">6 active right now</div>
+                                        </div>
+                                    </div>
+                                    <div class="room-arrow" style="color: #10B981;">→</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Screen 2: Focus Room Screen -->
+                    <div class="screen-content" id="screen-room">
+                        
+                        <!-- Header with back button -->
+                        <div class="room-header">
+                            <div class="back-btn" onclick="backToDashboard()">←</div>
+                            <div class="room-header-text">
+                                <h2 id="room-name-display">Rainy Tokyo Session</h2>
+                                <div class="room-header-status">
+                                    <div class="room-status-indicator" id="room-indicator-color"></div>
+                                    <span id="room-header-count">5 active</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Vibe Status Pills Row -->
+                        <div class="vibe-row">
+                            <div class="vibe-pill active" data-vibe="focused" onclick="changeMyVibe('focused')">Deep Focus</div>
+                            <div class="vibe-pill" data-vibe="vibing" onclick="changeMyVibe('vibing')">Vibe Mode</div>
+                            <div class="vibe-pill" data-vibe="slacking" onclick="changeMyVibe('slacking')">On Break</div>
+                            <div class="vibe-pill" data-vibe="sleeping" onclick="changeMyVibe('sleeping')">Resting</div>
+                        </div>
+
+                        <!-- 2D Canvas Map Floor -->
+                        <div class="grid-floor" id="floor-area">
+                            <div class="grid-grid-canvas">
+                                <div class="grid-cell"></div><div class="grid-cell"></div><div class="grid-cell"></div><div class="grid-cell"></div><div class="grid-cell"></div><div class="grid-cell"></div>
+                                <div class="grid-cell"></div><div class="grid-cell"></div><div class="grid-cell"></div><div class="grid-cell"></div><div class="grid-cell"></div><div class="grid-cell"></div>
+                                <div class="grid-cell"></div><div class="grid-cell"></div><div class="grid-cell"></div><div class="grid-cell"></div><div class="grid-cell"></div><div class="grid-cell"></div>
+                                <div class="grid-cell"></div><div class="grid-cell"></div><div class="grid-cell"></div><div class="grid-cell"></div><div class="grid-cell"></div><div class="grid-cell"></div>
+                                <div class="grid-cell"></div><div class="grid-cell"></div><div class="grid-cell"></div><div class="grid-cell"></div><div class="grid-cell"></div><div class="grid-cell"></div>
+                                <div class="grid-cell"></div><div class="grid-cell"></div><div class="grid-cell"></div><div class="grid-cell"></div><div class="grid-cell"></div><div class="grid-cell"></div>
+                            </div>
+                            
+                            <!-- Raza (You) Avatar -->
+                            <div class="avatar-widget" id="user-raza-avatar" data-status="focused" style="bottom: 15px; left: calc(50% - 35px);">
+                                <div class="avatar-circle" style="background: linear-gradient(135deg, #1e1b4b, #251e3a);">
+                                    RZ
+                                    <span class="vibe-badge" id="my-vibe-badge"></span>
+                                </div>
+                                <div class="avatar-name">Raza (You)</div>
+                            </div>
+
+                            <!-- Buddy 1 (Kai) -->
+                            <div class="avatar-widget" id="buddy-kai" data-status="vibing" style="top: 25px; left: 30px;">
+                                <div class="avatar-circle">
+                                    KI
+                                    <span class="vibe-badge" id="badge-kai"></span>
+                                </div>
+                                <div class="avatar-name">Kai</div>
+                            </div>
+
+                            <!-- Buddy 2 (Lia) -->
+                            <div class="avatar-widget" id="buddy-lia" data-status="focused" style="top: 60px; right: 40px;">
+                                <div class="avatar-circle">
+                                    LA
+                                    <span class="vibe-badge" id="badge-lia"></span>
+                                </div>
+                                <div class="avatar-name">Lia</div>
+                            </div>
+
+                            <!-- Buddy 3 (Aris) -->
+                            <div class="avatar-widget" id="buddy-aris" data-status="slacking" style="top: 150px; left: 120px;">
+                                <div class="avatar-circle">
+                                    AS
+                                    <span class="vibe-badge" id="badge-aris"></span>
+                                </div>
+                                <div class="avatar-name">Aris</div>
+                            </div>
+
+                            <!-- Buddy 4 (Zoe) -->
+                            <div class="avatar-widget" id="buddy-zoe" data-status="sleeping" style="top: 190px; right: 80px;">
+                                <div class="avatar-circle">
+                                    ZE
+                                    <span class="vibe-badge" id="badge-zoe"></span>
+                                </div>
+                                <div class="avatar-name">Zoe</div>
+                            </div>
+                        </div>
+
+                        <!-- Elegant Lofi Player Widget -->
+                        <div class="lofi-widget">
+                            <div class="lofi-info">
+                                <div class="lofi-track-title" id="track-title">Rainy Tokyo Session</div>
+                                <div class="visualizer-container" id="vis-container">
+                                    <div class="wave-bar"></div>
+                                    <div class="wave-bar"></div>
+                                    <div class="wave-bar"></div>
+                                    <div class="wave-bar"></div>
+                                    <div class="wave-bar"></div>
+                                    <div class="wave-bar"></div>
+                                    <div class="wave-bar"></div>
+                                    <div class="wave-bar"></div>
+                                    <div class="wave-bar"></div>
+                                    <div class="wave-bar"></div>
+                                    <div class="wave-bar"></div>
+                                    <div class="wave-bar"></div>
+                                </div>
+                            </div>
+                            <div class="lofi-controls">
+                                <div class="lofi-btn" onclick="skipTrack()">→</div>
+                                <div class="lofi-btn lofi-play" id="play-pause-btn" onclick="togglePlayPause()">||</div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Phone Home Screen Grid Mock -->
+                    <div class="phone-homescreen" id="homescreen">
+                        <div>
+                            <div class="homescreen-time" id="home-clock">23:37</div>
+                            <div class="homescreen-date">Thursday, May 21</div>
+                        </div>
+
+                        <div class="app-icon-row">
+                            <div class="app-icon-wrapper" onclick="restoreAppFromHome()">
+                                <div class="homescreen-app-icon app-icon-focusroom">RZ</div>
+                                <div class="app-icon-label">FocusRoom</div>
+                            </div>
+                            <div class="app-icon-wrapper">
+                                <div class="homescreen-app-icon" style="background:#1b233a; color:#2563eb;">f</div>
+                                <div class="app-icon-label">Facebook</div>
+                            </div>
+                            <div class="app-icon-wrapper">
+                                <div class="homescreen-app-icon" style="background:#1b233a; color:#ea4335;">v</div>
+                                <div class="app-icon-label">YouTube</div>
+                            </div>
+                            <div class="app-icon-wrapper">
+                                <div class="homescreen-app-icon" style="background:#1b233a; color:#22c55e;">w</div>
+                                <div class="app-icon-label">WhatsApp</div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Under Phone Controls -->
+            <div class="device-controls">
+                <button class="control-btn control-btn-home" onclick="minimizeApp()">
+                    Minimize App
+                </button>
+                <button class="control-btn" onclick="rebootSimulator()">
+                    Reset
+                </button>
+            </div>
+        </div>
+
+        <!-- Right Side: Under-the-hood System Logs -->
+        <div class="terminal-panel">
+            <div class="terminal-header">
+                <h2>System & WebSocket Service Logs</h2>
+                <div class="terminal-badge">LIVE MONITOR</div>
+            </div>
+            <div class="terminal-body" id="log-body">
+                <!-- Log entries inserted here -->
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Track states
+        let isMinimized = false;
+        let isPlaying = true;
+        let myVibe = "focused";
+        let activeRoom = "";
+        let currentTrackIndex = 0;
+        const tracks = ["Rainy Tokyo Session", "Chillhop Library", "Lofi Horizon Cafe", "Deep Focus Studio"];
+        
+        const vibes = {
+            focused: { badge: "", label: "focused", name: "Deep Focus" },
+            vibing: { badge: "", label: "vibing", name: "Vibe Mode" },
+            slacking: { badge: "", label: "slacking", name: "On Break" },
+            sleeping: { badge: "", label: "sleeping", name: "Resting" }
+        };
+
+        const buddies = {
+            kai: { elementId: "buddy-kai", name: "Kai", state: "vibing" },
+            lia: { elementId: "buddy-lia", name: "Lia", state: "focused" },
+            aris: { elementId: "buddy-aris", name: "Aris", state: "slacking" },
+            zoe: { elementId: "buddy-zoe", name: "Zoe", state: "sleeping" }
+        };
+
+        // Initialize logging
+        function addLog(system, msg) {
+            const logBody = document.getElementById("log-body");
+            const now = new Date();
+            const timeStr = now.toTimeString().split(' ')[0] + "." + String(now.getMilliseconds()).padStart(3, '0');
+            
+            let systemClass = "log-msg";
+            let prefix = "";
+            
+            if (system === "SYS") {
+                systemClass = "log-system";
+                prefix = "[ShameEngine] ";
+            } else if (system === "WS") {
+                systemClass = "log-ws";
+                prefix = "[WebSocket] ";
+            } else if (system === "FGS") {
+                systemClass = "log-fgs";
+                prefix = "[ForegroundService] ";
+            }
+
+            const entry = document.createElement("div");
+            entry.className = "log-entry";
+            entry.innerHTML = `
+                <span class="log-time">${timeStr}</span>
+                <span class="${systemClass}">${prefix}${msg}</span>
+            `;
+            logBody.appendChild(entry);
+            logBody.scrollTop = logBody.scrollHeight;
+        }
+
+        // Clock Update
+        function updateClocks() {
+            const now = new Date();
+            const timeStr = String(now.getHours()).padStart(2, '0') + ":" + String(now.getMinutes()).padStart(2, '0');
+            document.getElementById("phone-clock").innerText = timeStr;
+            document.getElementById("home-clock").innerText = timeStr;
+        }
+        setInterval(updateClocks, 1000);
+        updateClocks();
+
+        // Audio visualizer bars loop
+        const visualizerBars = document.querySelectorAll(".wave-bar");
+        function animateVisualizer() {
+            if (isPlaying && !isMinimized && activeRoom !== "") {
+                visualizerBars.forEach(bar => {
+                    const height = Math.floor(Math.random() * 10) + 2;
+                    bar.style.height = height + "px";
+                });
+            } else {
+                visualizerBars.forEach(bar => {
+                    bar.style.height = "2px";
+                });
+            }
+        }
+        setInterval(animateVisualizer, 150);
+
+        // Simulation Loop for other buddies moving coordinates and changing status
+        function animateBuddies() {
+            if (isMinimized || activeRoom === "") return;
+
+            const floor = document.getElementById("floor-area");
+            const width = floor.clientWidth - 70;
+            const height = floor.clientHeight - 130;
+
+            // Animate Kai, Lia, Aris, Zoe
+            Object.keys(buddies).forEach(key => {
+                const buddy = buddies[key];
+                const element = document.getElementById(buddy.elementId);
+                
+                // Spring random coordinates
+                const newX = Math.floor(Math.random() * width) + 10;
+                const newY = Math.floor(Math.random() * (height - 40)) + 30;
+                
+                element.style.left = newX + "px";
+                element.style.top = newY + "px";
+
+                // Random status change
+                const rand = Math.random();
+                let status = "focused";
+                if (rand > 0.75) {
+                    status = "vibing";
+                } else if (rand > 0.5) {
+                    status = "slacking";
+                } else if (rand > 0.3) {
+                    status = "sleeping";
+                }
+
+                element.setAttribute("data-status", status);
+
+                if (buddy.state !== status) {
+                    buddy.state = status;
+                    addLog("WS", `Broadcast: ${buddy.name} state changed to ${status.toUpperCase()} at coordinate (${newX}, ${newY})`);
+                }
+            });
+        }
+        setInterval(animateBuddies, 4000);
+
+        // Navigation
+        function openRoom(roomName, colorCode, count) {
+            activeRoom = roomName;
+            document.getElementById("screen-dashboard").style.display = "none";
+            document.getElementById("screen-room").style.display = "flex";
+            document.getElementById("room-name-display").innerText = roomName;
+            document.getElementById("room-indicator-color").style.backgroundColor = colorCode;
+            document.getElementById("room-header-count").innerText = `${count} active`;
+            
+            // Set track based on room
+            document.getElementById("track-title").innerText = roomName;
+
+            addLog("SYS", `Navigating to room "${roomName}"`);
+            addLog("FGS", "Binding ShameForegroundService context.");
+            addLog("WS", `Connecting websocket: ws://localhost:8080/focusroom`);
+            addLog("WS", `Connected! Subscribed to sync updates for "${roomName}"`);
+            addLog("WS", "Broadcasting self joined: userId=current_user_raza, state=FOCUSED");
+
+            animateBuddies();
+        }
+
+        function backToDashboard() {
+            activeRoom = "";
+            document.getElementById("screen-dashboard").style.display = "flex";
+            document.getElementById("screen-room").style.display = "none";
+            addLog("SYS", "Navigating to Dashboard");
+            addLog("WS", "Disconnected from WebSocket server.");
+            addLog("FGS", "ForegroundService paused (room idle).");
+        }
+
+        // Toggle user vibe pills
+        function changeMyVibe(vibe) {
+            myVibe = vibe;
+            
+            // Update active status pill UI
+            document.querySelectorAll(".vibe-pill").forEach(pill => {
+                pill.classList.remove("active");
+                if (pill.getAttribute("data-vibe") === vibe) {
+                    pill.classList.add("active");
+                }
+            });
+
+            // Update user avatar
+            const avatar = document.getElementById("user-raza-avatar");
+            avatar.setAttribute("data-status", vibe);
+
+            addLog("WS", `Broadcast: user current_user_raza changed status to ${vibe.toUpperCase()}`);
+        }
+
+        // Lofi Controls
+        function togglePlayPause() {
+            isPlaying = !isPlaying;
+            const btn = document.getElementById("play-pause-btn");
+            if (isPlaying) {
+                btn.innerText = "||";
+                addLog("SYS", "Lofi Stream audio playback active.");
+            } else {
+                btn.innerText = "▶";
+                addLog("SYS", "Lofi Stream audio playback paused.");
+            }
+        }
+
+        function skipTrack() {
+            currentTrackIndex = (currentTrackIndex + 1) % tracks.length;
+            const newTrack = tracks[currentTrackIndex];
+            document.getElementById("track-title").innerText = newTrack;
+            addLog("WS", `WebSocket Event: Skip track. Syncing stream. Active track: "${newTrack}"`);
+        }
+
+        // SHAME ENGINE - MINIMIZE APP SIMULATION
+        function minimizeApp() {
+            if (isMinimized) return;
+            isMinimized = true;
+            
+            const homescreen = document.getElementById("homescreen");
+            homescreen.style.display = "flex";
+            setTimeout(() => { homescreen.style.opacity = 1; }, 50);
+
+            addLog("SYS", "!!! App Minimized to Background !!!");
+            addLog("FGS", "Detecting minimize event -> Raising Foreground Sync Process");
+            addLog("WS", "Broadcasting state_change: current_user_raza is now OFFLINE");
+            
+            const prevVibe = myVibe;
+            changeMyVibe("sleeping");
+            myVibe = prevVibe; // preserve previous state for restore
+
+            setTimeout(() => {
+                const banner = document.getElementById("notif-banner");
+                banner.classList.add("active");
+                addLog("FGS", "Notification Alert Raised: Raza is offline. Your focus group is still working.");
+            }, 800);
+        }
+
+        function restoreAppFromHome() {
+            if (!isMinimized) return;
+            isMinimized = false;
+
+            const homescreen = document.getElementById("homescreen");
+            homescreen.style.opacity = 0;
+            setTimeout(() => { homescreen.style.display = "none"; }, 400);
+
+            const banner = document.getElementById("notif-banner");
+            banner.classList.remove("active");
+
+            addLog("SYS", "=== App Restored to Foreground ===");
+            addLog("FGS", "App active - clearing active notifications.");
+            addLog("WS", "Broadcasting state_change: current_user_raza is now FOCUSED");
+            
+            changeMyVibe("focused");
+        }
+
+        function restoreAppFromNotif() {
+            addLog("SYS", "User clicked on ongoing service notification!");
+            restoreAppFromHome();
+        }
+
+        function rebootSimulator() {
+            isMinimized = false;
+            isPlaying = true;
+            myVibe = "focused";
+            activeRoom = "";
+            currentTrackIndex = 0;
+
+            document.getElementById("homescreen").style.display = "none";
+            document.getElementById("homescreen").style.opacity = 0;
+            document.getElementById("notif-banner").classList.remove("active");
+            document.getElementById("screen-dashboard").style.display = "flex";
+            document.getElementById("screen-room").style.display = "none";
+
+            document.querySelectorAll(".vibe-pill").forEach(pill => {
+                pill.classList.remove("active");
+                if (pill.getAttribute("data-vibe") === "focused") pill.classList.add("active");
+            });
+
+            document.getElementById("user-raza-avatar").setAttribute("data-status", "focused");
+            document.getElementById("play-pause-btn").innerText = "||";
+
+            const logBody = document.getElementById("log-body");
+            logBody.innerHTML = "";
+            
+            initSystem();
+        }
+
+        function initSystem() {
+            addLog("SYS", "FocusRoom Multi-Platform WebSocket Emulator Initialized.");
+            addLog("FGS", "ShameEngine Background Daemon running.");
+            addLog("SYS", "Ready to explore! Click any FocusRoom in the phone screen to lock in.");
+        }
+
+        window.onload = initSystem;
+    </script>
+</body>
+</html>
