@@ -44,7 +44,7 @@ APP_BASE_NAME=`basename "$PRG"`
 APP_HOME=`cd "$APP_HOME" >/dev/null && pwd`
 
 # Use the maximum available, or set custom JVM arguments.
-DEFAULT_JVM_OPTS='"-Xmx64m" "-Xms64m"'
+DEFAULT_JVM_OPTS=""
 
 # Collect all arguments for the java command; double-quote any windows paths
 # that contain spaces.
@@ -78,7 +78,7 @@ location of your Java installation."
 fi
 
 # Add default JVM options here. You can also use JAVA_OPTS and GRADLE_OPTS to pass JVM options to this script.
-DEFAULT_JVM_OPTS='"-Xmx64m" "-Xms64m"'
+DEFAULT_JVM_OPTS=""
 
 # Resolve dependencies
 CLASSPATH=$APP_HOME/gradle/wrapper/gradle-wrapper.jar
