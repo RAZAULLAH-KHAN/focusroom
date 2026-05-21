@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.FocusRoom" parent="Theme.Material3.Dark.NoActionBar">
+    <style name="Theme.FocusRoom" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="android:statusBarColor">#0D0E12</item> <!-- BackgroundDark -->
         <item name="android:windowLightStatusBar">false</item>
